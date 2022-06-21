@@ -7,7 +7,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 	if (SUCCEEDED(CoInitialize(NULL)))
 	{
 		{
-			D2DSimpleSurvivalGameApp app;
+			DevSlem::D2DSimpleSurvivalGame::D2DSimpleSurvivalGameApp app;
 			if (SUCCEEDED(app.Initialize(hInstance)))
 			{
 				app.RunMessageLoop();
