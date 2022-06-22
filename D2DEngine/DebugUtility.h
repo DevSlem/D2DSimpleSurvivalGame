@@ -1,3 +1,3 @@
 #pragma once
 
-#define DEBUG_RENDERING 1
+#define DEBUG_RENDERING 0
