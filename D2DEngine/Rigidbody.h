@@ -12,8 +12,8 @@ namespace DevSlem::D2DEngine
 
 	private:
 		// Field
-		bool positionUpdated;
-		Vector2 position;
+		//bool positionUpdated;
+		//Vector2 position;
 		Vector2 velocity;
 		Vector2 totalForce;
 		Vector2 momentum;

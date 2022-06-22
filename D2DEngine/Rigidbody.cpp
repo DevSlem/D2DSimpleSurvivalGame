@@ -7,7 +7,7 @@ Rigidbody::Rigidbody(DevSlem::D2DEngine::GameObject* gameObject) : Component(gam
 	gravityScale = 1;
 	mass = 1;
 
-	positionUpdated = false;
+	//positionUpdated = false;
 	freezePositionX = false;
 	freezePositionY = false;
 }
