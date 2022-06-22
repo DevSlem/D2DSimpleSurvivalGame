@@ -2,7 +2,7 @@
 
 [Direct 2D](https://docs.microsoft.com/ko-kr/windows/win32/learnwin32/your-first-direct2d-program) API를 사용하여 만든 간단한 게임이다. 게임은 적들을 피해 오래동안 살아남으면 되는 간단한 게임이다.
 
-![](Images/d2d-simple-survival-game.png)
+![](Images/d2d-simple-survival-game.webp)
 
 #### 조작 방법
 
