@@ -351,6 +351,11 @@ EnemyComponent::EnemyComponent(::GameObject* gameObject, Rigidbody* rigidbody, R
 	this->collider = collider;
 	collider->AddListener(this);
 
+	this->randomMoveTriggered = false;
+	this->attackTriggered = false;
+	this->moveStopTriggred = false;
+	this->moveToTargetTriggered = false;
+
 	target = nullptr;
 	deltaTime = 0;
 	movingArea = D2D1::RectF(300, 300, 980, 650);
@@ -448,22 +453,14 @@ bool EnemyComponent::CanAttackTarget()
 }
 
 
-void EnemyComponent::SetMoveSetting()
+void EnemyComponent::RandomMove()
 {
 	rigidbody->SetVelocity(Random::Range(minSpeed, maxSpeed) * Random::Direction());
 }
 
 void EnemyComponent::MoveToTarget()
 {
-	if (Vector2::Distance(rigidbody->Position(), target->Transform()->position) <= 5)
-	{
-		rigidbody->SetVelocity(Vector2::Zero());
-	}
-	else
-	{
-		auto direction = this->Transform()->position.Direction(target->Transform()->position);
-		rigidbody->MovePosition(maxSpeed * direction * deltaTime);
-	}
+	moveToTargetTriggered = true;
 }
 
 void EnemyComponent::ActionIdle()
@@ -483,7 +480,7 @@ void EnemyComponent::ActionIdle()
 	if (timer.Tick(deltaTime))
 	{
 		timer.SetDuration(5); // 5초 동안 이동
-		SetMoveSetting();
+		randomMoveTriggered = true;
 		fsm.TriggerEvent(Event::Dubious);
 	}
 }
@@ -502,7 +499,7 @@ void EnemyComponent::ActionMove()
 	if (timer.Tick(deltaTime))
 	{
 		timer.SetDuration(1); // 1초 동안 정지
-		rigidbody->SetVelocity(Vector2::Zero());
+		moveStopTriggred = true;
 		fsm.TriggerEvent(Event::StopMove);
 	}
 }
@@ -540,19 +537,17 @@ void EnemyComponent::ActionAttack()
 		return;
 	}
 
-	if (!CanAttackTarget())
-	{
-		rigidbody->SetVelocity(Vector2::Zero());
-		fsm.TriggerEvent(Event::OutOfAttack);
-		return;
-	}
-
 	if (timer.Tick(deltaTime))
 	{
-		auto direction = this->Transform()->position.Direction(target->Transform()->position);
-		rigidbody->SetVelocity(Vector2::Zero());
-		rigidbody->AddForce(dashPower * direction);
+		attackTriggered = true;
 		timer.SetDuration(1);
+	}
+
+	if (!CanAttackTarget())
+	{
+		moveStopTriggred = true;
+		fsm.TriggerEvent(Event::OutOfAttack);
+		return;
 	}
 }
 
@@ -573,7 +568,6 @@ void EnemyComponent::CheckClicked()
 		this->AddDamage(1);
 	}
 }
-
 
 void EnemyComponent::Update(float deltaTime)
 {
@@ -598,6 +592,40 @@ void EnemyComponent::OnCollision(Collision& collision)
 		target->AddDamage(attackDamage);
 		targetAttackTimer.Initialize();
 		attackSound.Play();
+	}
+}
+
+void DevSlem::D2DSimpleSurvivalGame::EnemyComponent::FixedUpdate(float fixedDeltaTime)
+{
+	if (moveStopTriggred)
+	{
+		rigidbody->SetVelocity(Vector2::Zero());
+		moveStopTriggred = false;
+	}
+	else if (moveToTargetTriggered)
+	{
+		if (Vector2::Distance(rigidbody->Position(), target->Transform()->position) <= 5)
+		{
+			//rigidbody->SetVelocity(Vector2::Zero());
+		}
+		else
+		{
+			auto direction = this->Transform()->position.Direction(target->Transform()->position);
+			rigidbody->MovePosition(maxSpeed * direction * fixedDeltaTime);
+		}
+		moveToTargetTriggered = false;
+	}
+	else if (attackTriggered)
+	{
+		auto direction = this->Transform()->position.Direction(target->Transform()->position);
+		rigidbody->SetVelocity(Vector2::Zero());
+		rigidbody->AddForce(dashPower * direction);
+		attackTriggered = false;
+	}
+	else if (randomMoveTriggered)
+	{
+		RandomMove();
+		randomMoveTriggered = false;
 	}
 }
 
@@ -662,6 +690,7 @@ Enemy::Enemy() : rigidbody(this), collider(this, &rigidbody, true), enemy(this, 
 	collider.physicsMaterial.SetBounciness(0.1f);
 	collider.SetSize(Vector2(20, 20));
 	collider.SetBoundsRendered(true);
+	collider.SetIsTrigger(true);
 
 	// enemy options
 	enemy.attackRange = 100;

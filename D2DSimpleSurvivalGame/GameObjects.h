@@ -220,7 +220,10 @@ namespace DevSlem::D2DSimpleSurvivalGame
 
 	};
 
-	class EnemyComponent : public EntityComponent, public DevSlem::D2DEngine::IUpdate, public DevSlem::D2DEngine::ICollision
+	class EnemyComponent : public EntityComponent, 
+		public DevSlem::D2DEngine::IUpdate, 
+		public DevSlem::D2DEngine::ICollision,
+		public DevSlem::D2DEngine::IFixedUpdate
 	{
 	public:
 		enum State
@@ -255,6 +258,10 @@ namespace DevSlem::D2DSimpleSurvivalGame
 		D2D1_RECT_F movingArea;
 
 		DevSlem::D2DEngine::Sound attackSound;
+		bool attackTriggered;
+		bool moveToTargetTriggered;
+		bool randomMoveTriggered;
+		bool moveStopTriggred;
 
 	public:
 		float viewRange;
@@ -271,7 +278,7 @@ namespace DevSlem::D2DSimpleSurvivalGame
 		bool TryTriggerDie();
 		bool IsTargetVisible();
 		bool CanAttackTarget();
-		void SetMoveSetting();
+		void RandomMove();
 		void MoveToTarget();
 
 		void ActionIdle();
@@ -297,6 +304,9 @@ namespace DevSlem::D2DSimpleSurvivalGame
 
 		// ICollision을(를) 통해 상속됨
 		virtual void OnCollision(DevSlem::D2DEngine::Collision& collision) override;
+
+		// IFixedUpdate을(를) 통해 상속됨
+		virtual void FixedUpdate(float fixedDeltaTime) override;
 	};
 
 	class EnemyRenderer : public DevSlem::D2DEngine::Renderer
