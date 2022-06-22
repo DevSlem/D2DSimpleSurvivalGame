@@ -53,8 +53,8 @@ void Updater::DetectCollision()
 				if (overlaps.x < overlaps.y)
 				{
 					bool check = delta_pos.x < 0;
-					normal1 = check ? Vector2::Left() : Vector2::Right();
-					normal2 = check ? Vector2::Right() : Vector2::Left();
+					normal1 = check ? Vector2::Right() : Vector2::Left();
+					normal2 = check ? Vector2::Left() : Vector2::Right();
 				}
 				else
 				{
