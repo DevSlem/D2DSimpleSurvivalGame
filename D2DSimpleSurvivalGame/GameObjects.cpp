@@ -61,7 +61,7 @@ Background::Background() : rigidbody(this), collider(this, &rigidbody)
 	rigidbody.freezePositionX = true;
 	rigidbody.freezePositionY = true;
 
-	collider.SetOffset(Vector2(0, 270));
+	collider.SetOffset(Vector2(0, 285));
 	collider.SetSize(Vector2(1280, 50));
 	collider.physicsMaterial.SetBounciness(0.8f);
 	collider.physicsMaterial.SetFriction(0.4f);
@@ -76,7 +76,7 @@ CannonBullet::CannonBullet() : rigidbody(this), collider(this, &rigidbody), atta
 	renderer.SetSize(Vector2(50, 50));
 	collider.SetSize(Vector2(50, 50));
 	collider.SetBoundsRendered(true);
-	collider.physicsMaterial.SetBounciness(1);
+	collider.physicsMaterial.SetBounciness(0.8);
 	rigidbody.gravityScale = 100;
 	rigidbody.mass = 200.0f;
 	this->SetName(L"Cannon Bullet");
